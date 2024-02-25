@@ -56,7 +56,7 @@ app.post("/api/event/:duration", (req, res, next) => {
         }
         res.json({
             "message": "success",
-            "data": data,
+            "data": {value},
             "id" : this.lastID
         })
     });
