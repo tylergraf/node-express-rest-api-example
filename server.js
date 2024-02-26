@@ -1,8 +1,9 @@
+require('dotenv').config()
 var express = require("express")
 const cors = require('cors');
 var app = express()
 var db = require("./database.js")
-
+const path = require('path');
 var bodyParser = require("body-parser");
 app.use(cors());
 
@@ -13,7 +14,7 @@ var HTTP_PORT = 8000
 
 // Start server
 app.listen(HTTP_PORT, () => {
-    console.log("Server running on port %PORT%".replace("%PORT%",HTTP_PORT))
+    console.log("Server running on port %PORT%".replace("%PORT%", HTTP_PORT))
 });
 
 app.get("/api/events", (req, res, next) => {
@@ -21,14 +22,14 @@ app.get("/api/events", (req, res, next) => {
     var params = []
     db.all(sql, params, (err, rows) => {
         if (err) {
-          res.status(400).json({"error":err.message});
-          return;
+            res.status(400).json({ "error": err.message });
+            return;
         }
         res.json({
-            "message":"success",
-            "data":rows
+            "message": "success",
+            "data": rows
         })
-      });
+    });
 });
 
 
@@ -37,30 +38,30 @@ app.get("/api/user/:id", (req, res, next) => {
     var params = [req.params.id]
     db.get(sql, params, (err, row) => {
         if (err) {
-          res.status(400).json({"error":err.message});
-          return;
+            res.status(400).json({ "error": err.message });
+            return;
         }
         res.json({
-            "message":"success",
-            "data":row
+            "message": "success",
+            "data": row
         })
-      });
+    });
 });
 
 
 app.post("/api/event/:duration", (req, res, next) => {
     const value = Number(req.params.duration)
-    
-    var sql ='INSERT INTO sumpEvent (value) VALUES (?)'
+
+    var sql = 'INSERT INTO sumpEvent (value) VALUES (?)'
     db.run(sql, [value], function (err, result) {
-        if (err){
-            res.status(400).json({"error": err.message})
+        if (err) {
+            res.status(400).json({ "error": err.message })
             return;
         }
         res.json({
             "message": "success",
-            "data": {value},
-            "id" : this.lastID
+            "data": { value },
+            "id": this.lastID
         })
     });
 })
@@ -70,17 +71,17 @@ app.delete("/api/event/:id", (req, res, next) => {
         'DELETE FROM sumpEvent WHERE id = ?',
         req.params.id,
         function (err, result) {
-            if (err){
-                res.status(400).json({"error": res.message})
+            if (err) {
+                res.status(400).json({ "error": res.message })
                 return;
             }
-            res.json({"message":"deleted", rows: this.changes})
-    });
+            res.json({ "message": "deleted", rows: this.changes })
+        });
 })
 
 
 // Root path
 app.get("/", (req, res, next) => {
-    res.json({"message":"Ok"})
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
