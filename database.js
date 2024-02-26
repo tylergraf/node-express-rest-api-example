@@ -46,9 +46,10 @@ const sendAlert = (error) => {
 
 let overTime = 0
 setInterval(() => {
-  var sql = "SELECT * FROM sumpEvent ORDER BY column DESC LIMIT 1"
+  var sql = "SELECT * FROM sumpEvent ORDER BY createdAt DESC LIMIT 1"
   db.get(sql, [], (err, row) => {
     if (err) {
+      console.log(err)
       sendAlert(true)
     } else {
       const last = new Date(row.createdAt)
